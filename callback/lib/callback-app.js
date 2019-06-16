@@ -2,18 +2,19 @@
  * Defines a function that serves as an object constructor. It accepts two arguments:
  * 1. "data": any old string
  * 2. "callBackObj": Holds a function in the "on" property, which in turn
- *                   accepts another function which will get called sometime 
+ *                   accepts another function which will get called sometime
  *                   later
- *                   a function 
+ *                   a function
  */
-function SomeConstructorFunction(data, pConsumer) {
-    this.data = data;
-    pConsumer.on('data', function () {
-        console.log(this.data);
-    });
+function SomeConstructorFunction(data, consumer) {
+        this.data = data;
+        consumer.on('data', function () {
+            console.log(this.data);
 }
 
-// Mock transport object
+/*
+ * Takes whaver 
+ */
 var consumer = {
     on: function(event, callback) {
         setTimeout(callback, 1000);
