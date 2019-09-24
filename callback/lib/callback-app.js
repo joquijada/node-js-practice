@@ -10,7 +10,9 @@ function SomeConstructorFunction(data, consumer) {
         this.data = data;
         consumer.on('data', function () {
             console.log(this.data);
+        });
 }
+ 
 
 /*
  * Takes whaver 
