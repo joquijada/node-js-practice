@@ -67,9 +67,9 @@ async function returnRejectedPromise () {
        * In essence, `await` has the effect on unwrapping the promise, handling the case
        * when the unwrapped gift is a bomb that blows up, or a sweet and fluffy teddy bear
        */
-      //return Promise.reject("Rejected promise")
-      await Promise.reject("Rejected promise")
-      //return await Promise.reject("Rejected promise")
+      //return Promise.reject("Rejected promise")       // Behavior 1
+      await Promise.reject("Rejected promise")          // Behavior 2
+      //return await Promise.reject("Rejected promise") // Behavior 3
     } catch(err) {
       return err
     }
