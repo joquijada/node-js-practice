@@ -1,8 +1,8 @@
 {
-  "name": "spread",
+  "name": "@node-js-practice/spread",
   "version": "1.0.0",
   "description": "Practice spread JavaScript operator (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax)",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

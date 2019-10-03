@@ -1,5 +1,5 @@
 {
-  "name": "async",
+  "name": "@node-js-practice/async",
   "version": "1.0.0",
   "description": "Practice async ops in Node.js",
   "main": "lib/index.js",

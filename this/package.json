@@ -1,8 +1,8 @@
 {
-  "name": "this",
+  "name": "@node-js-practice/this",
   "version": "1.0.0",
   "description": "Experimnt with JavaScript's this object",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

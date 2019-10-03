@@ -1,11 +1,8 @@
 {
-  "name": "@node-js-practice/define-property",
+  "name": "@node-js-practice/stream",
   "version": "1.0.0",
-  "description": "",
-  "main": "app.js",
-  "directories": {
-    "lib": "lib"
-  },
+  "description": "Practice and have fun with streams",
+  "main": "lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

@@ -1,5 +1,5 @@
 {
-  "name": "callback",
+  "name": "@node-js-practice/callback",
   "version": "1.0.0",
   "description": "",
   "main": "lib/callback-app.js",
