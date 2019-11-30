@@ -1,22 +1,24 @@
 const faultyReadable = require('./helpers/faulty-readable')
 const writeable = require('./helpers/writeable')
 /**
- * The purpose of this file is to test what happens to consumers when the producer they're piped 
- * into experiences an error. Are they abruptly stopped by throwing an exception?Are they more gracefully
- * unpiped? What if any event is emmitted.
- * The startegy is to listen to every event possible emitted by a writeable to tet hypothesis that they
+ * The purpose of this file is to test what happens to consumers when the producer (I.e. the readable) 
+ * they're piped into experiences an error. Are they abruptly stopped by throwing an exception? Are they more gracefully
+ * unpiped? What if any event is emmitted by the writeable?
+ * The strategy is to listen to every event possible emitted by a writeable to test hypothesis that they
  * are gracefully disconnected.
  */
 
 
- faultyReadable.on('error', (err) => {
+faultyReadable.on('error', (err) => {
   console.log("PRODUCER: There was an error event: " + err)
 })
- 
- faultyReadable.pipe(writeable).on('close', () => {
 
- }).on('drain', () => {
-   console.log("CONSUMER: There was a drain event")
+//faultyReadable.push('data added before piping')
+
+faultyReadable.pipe(writeable).on('close', () => {
+  console.log("CONSUMER: There was a close event")
+}).on('drain', () => {
+  console.log("CONSUMER: There was a drain event")
 }).on('error', () => {
   console.log("CONSUMER: There was an error event")
 }).on('finish', () => {
@@ -27,10 +29,10 @@ const writeable = require('./helpers/writeable')
   console.log("CONSUMER: There was an unpipe event")
 })
 
- // Set up faulty producer
+// Set up faulty producer
 
- // Connect consumer, and set up listeners on all the consumer events
+// Connect consumer, and set up listeners on all the consumer events
 
- // Start producing,
+// Start producing,
 
- module.exports = faultyReadable
+module.exports = faultyReadable
