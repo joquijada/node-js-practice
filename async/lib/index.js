@@ -106,5 +106,5 @@ function tryMe(config) {
     console.log("andWtfIsThis' resolved value is " + w)
   })
 
-  Promise.resolve.
+  //Promise.resolve.
 }
