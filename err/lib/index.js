@@ -63,20 +63,27 @@ async function returnRejectedPromise () {
        *    has wrapped the call in a try/catch, it will **not** go into the client/calling code's catch block. This
        *    is because we have caught the error ourselves.
        * 3. Same as #2 above
+       * 4. Same as #2 above. This is just the chaining way of doing `try { await <some promise returning code> } catch (e) { ... } `. The
+       *    `.catch()` attaches a callback to execute in case of failure
        * 
        * In essence, `await` has the effect on unwrapping the promise, handling the case
        * when the unwrapped gift is a bomb that blows up, or a sweet and fluffy teddy bear
        */
-      //return Promise.reject("Rejected promise")       // Behavior 1
-      await Promise.reject("Rejected promise")          // Behavior 2
-      //return await Promise.reject("Rejected promise") // Behavior 3
+      //return Promise.reject("Rejected promise")                    // Behavior 1
+      //await Promise.reject("Rejected promise")                     // Behavior 2
+      //return await Promise.reject("Rejected promise")              // Behavior 3
+      return Promise.reject("Rejected promise").catch(e => e) // Behavior 4
     } catch(err) {
       return err
     }
     
   }
   try {
-    const res = await reject()
+    /*
+     *
+     */
+    //const res = await reject()
+    const res = await Promise.all([reject()])
     console.log("Control did **not** go to catch " + res)
   } catch (err) {
     console.log("Control **did** go into catch block: " + err)
