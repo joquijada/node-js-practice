@@ -45,12 +45,15 @@ async function resourceUsageReport() {
   console.log(memStats)
   //const extractedStats = memStats.replace(/\n/g, ' ').matchAll(/.*PhysMem: (\d+\w).*?(\d+\w)\sunused.*MEM.*?(\d+\w).*/)
   //const extractedStats = memStats.replace(/\n/g, ' ').match(/PhysMem: (?<totalUsedMemory>\d+\w).*?(?<totalFreeMemory>\d+\w)\sunused.*MEM.*?(?<processUsedMemory>\d+\w)/)
-  const extractedStats = memStats.replace(/\n/g, ' ').match(/PhysMem: (?<totalUsedMemory>\d+\w).*?(?<totalFreeMemory>\d+\w)\sunused.*MEM.*?(?<processUsedMemory>\d+\w)/)
+  const extractedStats = memStats.replace(/\n/g, ' ').matchAll(/(\S+):\s+(\d+\s*\w*)/g)
   //const memStats = top.replace(/\n/g, ' ').matchAll(/.*PhysMem: (\d+\w).*?(\d+\w)\sunused.*MEM.*?(\d+\w).*/)
   console.log(extractedStats.groups)
-  /*for (var m of extractedStats) {
-    console.log(`Using 'String.matchAll(), entire match is ${m[0]} matched group 1 is ${m[1]}, matched group 2 is ${m[2]}, matched group 3 is ${m[3]}`)
-  }*/
+  for (var m of extractedStats) {
+    console.log(`Using 'String.matchAll(), entire match is ${m[0]} matched group 1 is ${m[1]}, matched group 2 is ${m[2]}`)
+  }
+
+  console.log(`Number of FD's in Linux is ${[...fdInfoLinux().replace(/\n/g, ' ').matchAll(/\d+ ->/g)].length}`)
+  console.log(`Number of FD's in MacOs is ${[...fdInfoMacOs().matchAll(/\n/g)].length}`)
   return 'Fuck you'
 }
 
@@ -77,5 +80,40 @@ function memInfo() {
   'AnonPages:        111180 kB\n' +
   'Mapped:            56396 kB\n' +
   'Shmem:             16676 kB'
+}
+
+function fdInfoLinux() {
+  return 'total 0\n' +
+  'lr-x------ 1 sbx_user1051 990 64 Mar 12 03:46 0 -> /dev/null\n' +
+  'l-wx------ 1 sbx_user1051 990 64 Mar 12 03:46 1 -> pipe:[5144]\n' +
+  'lrwx------ 1 sbx_user1051 990 64 Mar 12 03:46 10 -> anon_inode:[eventpoll]\n' +
+  'lr-x------ 1 sbx_user1051 990 64 Mar 12 03:46 11 -> pipe:[4413]\n' +
+  'l-wx------ 1 sbx_user1051 990 64 Mar 12 03:46 12 -> pipe:[4413]\n' +
+  'lrwx------ 1 sbx_user1051 990 64 Mar 12 03:46 13 -> anon_inode:[eventfd]\n' +
+  'lrwx------ 1 sbx_user1051 990 64 Mar 12 03:46 14 -> anon_inode:[eventpoll]\n' +
+  'lr-x------ 1 sbx_user1051 990 64 Mar 12 03:46 15 -> pipe:[5153]\n' +
+  'l-wx------ 1 sbx_user1051 990 64 Mar 12 03:46 16 -> pipe:[5153]\n' +
+  'lrwx------ 1 sbx_user1051 990 64 Mar 12 03:46 17 -> anon_inode:[eventfd]\n' +
+  'lr-x------ 1 sbx_user1051 990 64 Mar 12 03:46 18 -> /dev/null\n' +
+  'lrwx------ 1 sbx_user1051 990 64 Mar 12 03:46 19 -> socket:[5162]\n' +
+  'l-wx------ 1 sbx_user1051 990 64 Mar 12 03:46 2 -> pipe:[5144]\n' +
+  'lrwx------ 1 sbx_user1051 990 64 Mar 12 03:46 20 -> socket:[4416]\n' +
+  'lrwx------ 1 sbx_user1051 990 64 Mar 12 03:46 21 -> socket:[6172]\n' +
+  'lrwx------ 1 sbx_user1051 990 64 Mar 12 03:46 22 -> socket:[5069]\n' +
+  'lrwx------ 1 sbx_user1051 990 64 Mar 12 03:46 23 -> socket:[6180]\n' +
+  'lrwx------ 1 sbx_user1051 990 64 Mar 12 03:46 24 -> socket:[4925]\n' +
+  'lrwx------ 1 sbx_user1051 990 64 Mar 12 03:46 25 -> socket:[6174]\n' +
+  'lrwx------ 1 sbx_user1051 990 64 Mar 12 03:46 26 -> socket:[5784]\n' +
+  'lrwx------ 1 sbx_user1051 990 64 Mar 12 03:46 27 -> socket:[4743]\n' +
+  'lrwx------ 1 sbx_user1051 990 64 Mar 12 03:46 28 -> socket:[5070]\n' +
+  'lrwx------ 1 sbx_user1051 990 64 Mar 12 03:46 29 -> socket:[6176]\n' +
+  'l-wx------ 1 sbx_user1051 990 64 Mar 12 03:46 3 -> pipe:[4318]\n'
+}
+
+function fdInfoMacOs() {
+  return 'node       3850 jmquij0106   28u  IPv4 0x76e39467498810d9      0t0  TCP 127.0.0.1:49593 (LISTEN)\n' +
+    'node       3850 jmquij0106   29u  IPv4 0x76e394674db47959      0t0  TCP 127.0.0.1:49594 (LISTEN)\n' +
+    'node       3850 jmquij0106   31u  IPv4 0x76e394674c69f339      0t0  TCP 127.0.0.1:45623 (LISTEN)\n' +
+    'node       3850 jmquij0106   32u  IPv4 0x76e39467505e0339      0t0  TCP 127.0.0.1:54671 (LISTEN)\n'
 }
 
