@@ -18,7 +18,7 @@ console.log(str.match(pattern)) // [ 'a:1', 'b:2', 'c:3' ]
 console.log(JSON.stringify(str.match(/(?<key>\S+):(?<value>\S+)/).groups))
 
 // Using RegExp.exec() is a different beast altogether. Must use global flag to get captured groups, moreover
-// Must iterate over each invocation of exec(). The use of global flag activates behavior which "remembers" where last match
+// must iterate over each invocation of exec(). The use of global flag activates behavior which "remembers" where last match
 // occurred to know where it left off in order to pick up next match in each iteration
 while (r = pattern.exec(str)) {
   console.log(`Using RegExp.exec() match: ${r}`)
@@ -40,24 +40,27 @@ for (var m of matches) {
 resourceUsageReport().then(console.log, console.error)
 
 async function resourceUsageReport() {
-  //const { stdout: memStats } = await execP(`top -pid 25217 -l 1 -stats mem`)
-  const memStats = memInfo()
-  console.log(memStats)
+  //const { stdout: memStats } = await execP(`top -pid 25217 -l 1 -stats mem`) // Works on MacOS
+  for (const func of [memInfoLinux, memInfoMacOs]) {
+    const memStats = func()
+    console.log(`memStats is ${memStats}`)
+    //const extractedStats = memStats.replace(/\n/g, ' ').matchAll(/(\S+):\s+(\d+\s*\w*)/g)
+    const extractedStats = memStats.replace(/\n/g, '__NEWLINE__').matchAll(/(.+?):\s+(.+?)__NEWLINE__/g)
+    for (var m of extractedStats) {
+      console.log(`Using 'String.matchAll(), entire match is '${m[0]}', matched group 1 is '${m[1]}', matched group 2 is '${m[2]}'`)
+    }
+  }
+
   //const extractedStats = memStats.replace(/\n/g, ' ').matchAll(/.*PhysMem: (\d+\w).*?(\d+\w)\sunused.*MEM.*?(\d+\w).*/)
   //const extractedStats = memStats.replace(/\n/g, ' ').match(/PhysMem: (?<totalUsedMemory>\d+\w).*?(?<totalFreeMemory>\d+\w)\sunused.*MEM.*?(?<processUsedMemory>\d+\w)/)
-  const extractedStats = memStats.replace(/\n/g, ' ').matchAll(/(\S+):\s+(\d+\s*\w*)/g)
   //const memStats = top.replace(/\n/g, ' ').matchAll(/.*PhysMem: (\d+\w).*?(\d+\w)\sunused.*MEM.*?(\d+\w).*/)
-  console.log(extractedStats.groups)
-  for (var m of extractedStats) {
-    console.log(`Using 'String.matchAll(), entire match is ${m[0]} matched group 1 is ${m[1]}, matched group 2 is ${m[2]}`)
-  }
 
   console.log(`Number of FD's in Linux is ${[...fdInfoLinux().replace(/\n/g, ' ').matchAll(/\d+ ->/g)].length}`)
   console.log(`Number of FD's in MacOs is ${[...fdInfoMacOs().matchAll(/\n/g)].length}`)
   return 'Fuck you'
 }
 
-function memInfo() {
+function memInfoLinux() {
   return '# cat /proc/meminfo \n' +
   'MemTotal:        1882064 kB\n' +
   'MemFree:         1376380 kB\n' +
@@ -80,6 +83,19 @@ function memInfo() {
   'AnonPages:        111180 kB\n' +
   'Mapped:            56396 kB\n' +
   'Shmem:             16676 kB'
+}
+
+function memInfoMacOs() {
+  return 'Processes: 506 total, 3 running, 503 sleeping, 3390 threads \n' +
+    '2021/03/20 20:04:26\n' +
+    'Load Avg: 2.05, 3.25, 3.54 \n' +
+    'CPU usage: 5.29% user, 21.76% sys, 72.94% idle \n' +
+    'SharedLibs: 256M resident, 54M data, 14M linkedit.\n' +
+    'MemRegions: 318564 total, 4485M resident, 100M private, 3523M shared.\n' +
+    'PhysMem: 16G used (4588M wired), 246M unused.\n' +
+    'VM: 4563G vsize, 1993M framework vsize, 431772604(0) swapins, 435824642(0) swapouts.\n' +
+    'Networks: packets: 61697373/97G in, 61522683/96G out.\n' +
+    'Disks: 58857621/2042G read, 19420059/1818G written.\n'
 }
 
 function fdInfoLinux() {
