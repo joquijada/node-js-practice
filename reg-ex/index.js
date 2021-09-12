@@ -13,7 +13,7 @@ var pattern = RegExp('\\S+', 'g')
 const str = 'a:1 b:2 c:3'
 console.log(str.match(pattern)) // [ 'a:1', 'b:2', 'c:3' ]
 
-// Need to omit global flag to get captured groups, also captured groups must be named,
+// Need to omit global flag to get captured groups, also captured groups must be named if one wants the 'groups' structure available
 // [REF|https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/match|"An object of named capturing groups whose keys are the names and values"]
 console.log(JSON.stringify(str.match(/(?<key>\S+):(?<value>\S+)/).groups))
 
