@@ -29,7 +29,7 @@ var matches = str.matchAll(pattern)
 console.log(`Using 'String.matchAll(), there were ${[...matches].length} matches.`)
 matches = str.matchAll(pattern)
 for (var m of matches) {
-  console.log(`Using 'String.matchAll(), entire match is ${m[0]} matched group 1 is ${m[1]}, matched group 2 is ${m[2]}`)
+  console.log(`Using 'String.matchAll(), entire match is ${m[0]}, matched group 1 is ${m[1]}, matched group 2 is ${m[2]}`)
 }
 
 
