@@ -7,14 +7,26 @@ console.log(`Process info ${JSON.stringify(process.env)}`)
 // [REF|https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/matchAll|'Capture groups are ignored when using match() with the global /g flag']
 
 // Below two ways of defining a pattern are equivalent
-//var pattern = /(\S+):(\S+)/g
-var pattern = RegExp('\\S+', 'g')
+var pattern = /(\S+):(\S+)/g
+//var pattern = RegExp('\\S+', 'g')
 
+// Alas, String.match() does not support non-named groups, must use RegEx.exec(),
+// [REF|https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/match|"If you want to obtain capture groups and the global flag is set, you need to use RegExp.exec() or String.prototype.matchAll() instead."]
 const str = 'a:1 b:2 c:3'
-console.log(str.match(pattern)) // [ 'a:1', 'b:2', 'c:3' ]
+console.log(`Match(es) found on ${str} using 'String.match(/(\\S+):(\\S+)/g)', ${str.match(pattern)}, where the fuck are my captured groups?`) // [ 'a:1', 'b:2', 'c:3' ]
+
+
+// Notice that must invoke exec() multiple times to retrieve all matches
+console.log(`Match(es) found on ${str} using '(/(\\S+):(\\S+)/g).exec()', ${pattern.exec(str)}`)
+console.log(`Match(es) found on ${str} using '(/(\\S+):(\\S+)/g).exec()', ${pattern.exec(str)}`)
+console.log(`Match(es) found on ${str} using '(/(\\S+):(\\S+)/g).exec()', ${pattern.exec(str)}`)
+
+
+
 
 // Need to omit global flag to get captured groups, also captured groups must be named if one wants the 'groups' structure available
 // [REF|https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/match|"An object of named capturing groups whose keys are the names and values"]
+// If 'g' flag is specified then no capturing groups are returned
 console.log(JSON.stringify(str.match(/(?<key>\S+):(?<value>\S+)/).groups))
 
 // Using RegExp.exec() is a different beast altogether. Must use global flag to get captured groups, moreover
