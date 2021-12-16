@@ -1,38 +1,54 @@
 const faultyReadable = require('./helpers/faulty-readable')
 const writeable = require('./helpers/writeable')
+const { pipeline } = require('stream/promises')
 /**
- * The purpose of this file is to test what happens to consumers when the producer (I.e. the readable) 
+ * The purpose of this file is to test what happens to consumers when the producer (I.e. the readable)
  * they're piped into experiences an error. Are they abruptly stopped by throwing an exception? Are they more gracefully
- * unpiped? What if any event is emmitted by the writeable?
+ * unpip'ed? What if any event is emmitted by the writeable?
  * The strategy is to listen to every event possible emitted by a writeable to test hypothesis that they
  * are gracefully disconnected.
+ * Result: When using the API pipeline() method, the streams are destroyed,
+ * [REF||"stream.pipeline() will call stream.destroy(err) on all streams except:"]. I do
+ *   see the Readable 'error' event getting triggered if for example the `Writeable` propagates an error,
+ *   <pre>
+ *   CONSUMER: There was an error event jackass
+ *   CONSUMER: There was a close event undefined
+ *   PRODUCER: There was an error event:  jackass
+ *   Pipeline failed jackass
+ *   </pre>
+ *
+ *   If I don't use pipeline(), if one stream fails the others are not auto-destroyed. So using pipeline() does offer
+ *   its benefits.
  */
 
 
 faultyReadable.on('error', (err) => {
-  console.log("PRODUCER: There was an error event: " + err)
+  console.log('PRODUCER: There was an error event: ', err)
 })
 
 //faultyReadable.push('data added before piping')
 
-faultyReadable.pipe(writeable).on('close', () => {
-  console.log("CONSUMER: There was a close event")
-}).on('drain', () => {
-  console.log("CONSUMER: There was a drain event")
-}).on('error', () => {
-  console.log("CONSUMER: There was an error event")
-}).on('finish', () => {
-  console.log("CONSUMER: There was a finish event")
-}).on('pipe', () => {
-  console.log("CONSUMER: There was a pipe event")
-}).on('unpipe', () => {
-  console.log("CONSUMER: There was an unpipe event")
+const usePipeline = true
+
+writeable.on('close', (e) => {
+  console.log('CONSUMER: There was a close event', e)
+}).on('drain', (e) => {
+  console.log('CONSUMER: There was a drain event', e)
+}).on('error', (e) => {
+  console.log('CONSUMER: There was an error event', e)
+}).on('finish', (e) => {
+  console.log('CONSUMER: There was a finish event', e)
+}).on('pipe', (e) => {
+  console.log('CONSUMER: There was a pipe event', e)
+}).on('unpipe', (e) => {
+  console.log('CONSUMER: There was an unpipe event', e)
 })
 
-// Set up faulty producer
+if (usePipeline) {
+    pipeline(faultyReadable, writeable).catch(e => console.error('Pipeline failed', e))
+} else {
+  faultyReadable.pipe(writeable)
+}
 
-// Connect consumer, and set up listeners on all the consumer events
-
-// Start producing,
 
 module.exports = faultyReadable
