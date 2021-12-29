@@ -7,8 +7,8 @@ const { pipeline } = require('stream/promises')
  * unpip'ed? What if any event is emmitted by the writeable?
  * The strategy is to listen to every event possible emitted by a writeable to test hypothesis that they
  * are gracefully disconnected.
- * Result: When using the API pipeline() method, the streams are destroyed,
- * [REF||"stream.pipeline() will call stream.destroy(err) on all streams except:"]. I do
+ * Result: When using the API pipeline() method, all the streams are destroyed,
+ * [REF|https://nodejs.org/api/stream.html|"stream.pipeline() will call stream.destroy(err) on all streams except:"]. I do
  *   see the Readable 'error' event getting triggered if for example the `Writeable` propagates an error,
  *   <pre>
  *   CONSUMER: There was an error event jackass
@@ -28,7 +28,7 @@ faultyReadable.on('error', (err) => {
 
 //faultyReadable.push('data added before piping')
 
-const usePipeline = true
+const usePipeline = false
 
 writeable.on('close', (e) => {
   console.log('CONSUMER: There was a close event', e)
@@ -47,6 +47,7 @@ writeable.on('close', (e) => {
 if (usePipeline) {
     pipeline(faultyReadable, writeable).catch(e => console.error('Pipeline failed', e))
 } else {
+  faultyReadable.on('error', () => writeable.destroy("CONSUMER: I caught an error from the Readable, therefore destro()'ing myself"))
   faultyReadable.pipe(writeable)
 }
 

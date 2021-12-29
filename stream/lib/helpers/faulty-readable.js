@@ -14,8 +14,8 @@ module.exports = new Readable({
       this.push(null);
     }
     // Node.js docs say that emitting in this way results in undefined
-    // behavior, [REF|https://nodejs.org/api/stream.html|"hrowing an Error from within readable._read() or manually emitting an 'error' event results in undefined behavior."]
-    //this.emit('error', new Error('PRODUCER: There was an error producing data, propagated using "emit(err)", not recommended by Node, results in undefined behavior!!!'))
+    // behavior, [REF|https://nodejs.org/api/stream.html|"throwing an Error from within readable._read() or manually emitting an 'error' event results in undefined behavior."]
+    this.emit('error', new Error('PRODUCER: There was an error producing data, propagated using "emit(err)", not recommended by Node, results in undefined behavior!!!'))
     //throw new Error('PRODUCER: There was an error producing data, propagated using "throw new Error(err)", Node does not recommend this because of undefined behavior')
     //this.destroy('PRODUCER: There was an error producing data, propagated using "destroy(err)", this is the proper way to do it in Node')
   }
