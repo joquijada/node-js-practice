@@ -12,9 +12,10 @@ var pattern = /(\S+):(\S+)/g
 
 // Alas, String.match() does not support non-named groups, must use RegEx.exec(),
 // [REF|https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/match|"If you want to obtain capture groups and the global flag is set, you need to use RegExp.exec() or String.prototype.matchAll() instead."]
-const str = 'a:1 b:2 c:3'
+var str = 'a:1 b:2 c:3'
 console.log(`Match(es) found on ${str} using 'String.match(/(\\S+):(\\S+)/g)', ${str.match(pattern)}, where the fuck are my captured groups?`) // [ 'a:1', 'b:2', 'c:3' ]
-
+var str2 = "ApiEndpoint: https://bgu1kvfafe.execute-api.us-east-1.amazonaws.com\nHandleCerebrumImageFulfillmentRoleArn: arn:aws:iam::433661183964:role/dev-charcot-charcot-stack-HandleCerebrumImageFulfi-FC4S69T27R79\nHandleCerebrumImageTransferRoleArn: arn:aws:iam::433661183964:role/dev-charcot-charcot-stack-HandleCerebrumImageTrans-ZPQU1IO615QA"
+console.log(`Charcot: ${str2.match(/(HandleCerebrumImageFulfillmentRoleArn|HandleCerebrumImageTransferRoleArn)/)}`)
 
 // Notice that must invoke exec() multiple times to retrieve all matches
 console.log(`Match(es) found on ${str} using '(/(\\S+):(\\S+)/g).exec()', ${pattern.exec(str)}`)
