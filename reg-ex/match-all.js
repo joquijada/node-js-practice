@@ -6,7 +6,7 @@ const res = str.matchAll(/\s{4}(\S+): (.+)/g)
 
 const out = []
 for (const m of res) {
-  console.log(`JMQ: ${m[2]}`)
+  console.log(`JMQ: ${m[0]} ${m[1]} ${m[2]}`)
   // out.push({ resource: m.groups.resource, arn: m.groups.arn })
 }
 
@@ -16,6 +16,11 @@ console.log(JSON.stringify((out)))
 // [REF|https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/matchAll|"The RegExp object must have the /g flag, otherwise a TypeError will be thrown."]
 //res = str.matchAll(/(?<roleType>HandleCerebrumImageFulfillmentRoleArn|HandleCerebrumImageTransferRoleArn)/g)
 //console.log(res)
+
+for (const m of "'< 9'".matchAll(/'(\d+)\s<='|'<\s(\d+)'/g)) {
+  console.log(`JMQ: ${m[0]} ${m[1]} ${m[2]}`)
+}
+
 
 function target() {
   return "Using stage: dev\n" +
