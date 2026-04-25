@@ -4,7 +4,6 @@
  * 2. "callBackObj": Holds a function in the "on" property, which in turn
  *                   accepts another function which will get called sometime
  *                   later
- *                   a function
  */
 function SomeConstructorFunction(data, consumer) {
         this.data = data;
@@ -12,10 +11,10 @@ function SomeConstructorFunction(data, consumer) {
             console.log(this.data);
         });
 }
- 
+
 
 /*
- * Takes whaver 
+ * Takes whaver
  */
 var consumer = {
     on: function(event, callback) {

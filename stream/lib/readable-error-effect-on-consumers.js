@@ -8,27 +8,33 @@ const { pipeline } = require('stream/promises')
  * The strategy is to listen to every event possible emitted by a writeable to test hypothesis that they
  * are gracefully disconnected.
  * Result: When using the API pipeline() method, all the streams are destroyed,
- * [REF|https://nodejs.org/api/stream.html|"stream.pipeline() will call stream.destroy(err) on all streams except:"]. I do
- *   see the Readable 'error' event getting triggered if for example the `Writeable` propagates an error,
+ * [REF|https://nodejs.org/api/stream.html|"stream.pipeline() will call stream.destroy(err) on all streams except:"].
+ *   Even if I rig it so that the Writable is the one to throw error, I see the Readable 'error' and 'close' events getting triggered:
  *   <pre>
  *   CONSUMER: There was an error event jackass
  *   CONSUMER: There was a close event undefined
- *   PRODUCER: There was an error event:  jackass
+ *   PRODUCER: There was an error event:  CONSUMER stream has encountered an error (this is just a test)
  *   Pipeline failed jackass
  *   </pre>
  *
- *   If I don't use pipeline(), if one stream fails the others are not auto-destroyed. So using pipeline() does offer
+ *   If I don't use pipeline(), if one stream fails the others are not auto-destroyed, I have to manually close them, whereas
+ *   pipeline does it for me. So using pipeline() does offer
  *   its benefits.
+ *   The NodeJS docs outline this expected behavior: [REF|https://nodejs.org/api/stream.html#writabledestroyerror|"stream.pipeline() will call stream.destroy(err) on all streams except:"] and
+ *   [REF|https://nodejs.org/api/stream.html#writabledestroyerror|"stream.pipeline() closes all the streams when an error is raised."]. So
+ *   in essence pipeline() calls destroy(err) on the streams, which in turns emits the `error` and `close` events, [REF|https://nodejs.org/api/stream.html#writabledestroyerror|"Optionally emit an 'error' event, and emit a 'close' event (unless emitClose is set to false)"]
  */
 
 
 faultyReadable.on('error', (err) => {
   console.log('PRODUCER: There was an error event: ', err)
+}).on('close', (err) => {
+  console.log('PRODUCER: There was a close event: ', err)
 })
 
 //faultyReadable.push('data added before piping')
 
-const usePipeline = false
+const usePipeline = true
 
 writeable.on('close', (e) => {
   console.log('CONSUMER: There was a close event', e)
@@ -45,9 +51,9 @@ writeable.on('close', (e) => {
 })
 
 if (usePipeline) {
-    pipeline(faultyReadable, writeable).catch(e => console.error('Pipeline failed', e))
+  pipeline(faultyReadable, writeable).catch(e => console.error('Pipeline failed', e))
 } else {
-  faultyReadable.on('error', () => writeable.destroy("CONSUMER: I caught an error from the Readable, therefore destro()'ing myself"))
+  // faultyReadable.on('error', () => writeable.destroy("CONSUMER: I caught an error from the Readable, therefore destroy()'ing myself"))
   faultyReadable.pipe(writeable)
 }
 

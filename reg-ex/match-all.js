@@ -22,6 +22,14 @@ for (const m of "'< 9'".matchAll(/'(\d+)\s<='|'<\s(\d+)'/g)) {
 }
 
 
+const str2 = '[Thu, 27 Apr, 2023 04:49:15GMT] Request processed successfully on Thu, 27 Apr, 2023 04:49:15GMT [Thu, 27 Apr, 2023 04:49:15GMT] 482 of 482 zip files sent to requester.'
+const res2 = str2.matchAll(/\[[^\]]+\][^\[]+/g)
+// const res2 = str2.matchAll(/(Request)/g)
+console.log(`JMQ: res2 is ${res2}`)
+for (const m of res2) {
+  console.log(`JMQ: ${m}`)
+}
+
 function target() {
   return "Using stage: dev\n" +
     "Preparing your SST app\n" +
